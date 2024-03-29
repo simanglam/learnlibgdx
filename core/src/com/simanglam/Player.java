@@ -6,16 +6,19 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Player implements InputProcessor{
     static int MOVING_SPEED = 4;
     Sprite sprite;
-    Vector2 heading;
+    public Vector2 heading;
+    Vector2 lastHeading;
     public Player(){
         this.sprite = new Sprite(new Texture("character.png"));
         this.heading = new Vector2(0, 0);
+        this.lastHeading = this.heading.cpy();
     }
 
     public void draw(SpriteBatch batch){ sprite.draw(batch); }
@@ -26,9 +29,13 @@ public class Player implements InputProcessor{
     public boolean isHeadDown(){return heading.y == -1;}
     public boolean isHeadRight(){return heading.x == 1;}
     public boolean isHeadUP(){return heading.y == 1;}
+    public Vector2 getLastHeading(){return lastHeading;}
 
-    public Sprite getSprite(){ return sprite; }
+    public Sprite getSprite(){return sprite;}
     public Vector2 getPosition(){return new Vector2(this.sprite.getBoundingRectangle().x, this.sprite.getBoundingRectangle().y); }
+    public Rectangle creatInvestgateRectangle(){
+        return new Rectangle((float)Math.floor(this.sprite.getBoundingRectangle().x / 16) * 16 + lastHeading.x * 16, (float)Math.floor(this.sprite.getBoundingRectangle().y / 16) * 16 + lastHeading.y * 16, 16, 16);
+    }
 
     public void updateX(){
         Vector2 mVector2 = heading.cpy().scl(MOVING_SPEED);
@@ -38,6 +45,10 @@ public class Player implements InputProcessor{
     public void updateY(){
         Vector2 mVector2 = heading.cpy().scl(MOVING_SPEED);
         sprite.translate(0, mVector2.y);
+    }
+
+    public void collide(Rectangle rectangle){
+
     }
 
     @Override
@@ -57,6 +68,7 @@ public class Player implements InputProcessor{
         else if (keycode == Keys.W){
             heading.y += 1;
         }
+        lastHeading.set(this.heading);
         return true;
     }
 

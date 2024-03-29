@@ -1,120 +1,70 @@
 package com.simanglam.scenes;
 
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.simanglam.Dialog;
 import com.simanglam.Main;
 import com.simanglam.Player;
+import com.simanglam.World;
 
-public class MainMenu implements Screen{
+public class MainMenu extends InputAdapter implements Screen{
     Main game;
-    Texture img;
-    World world;
     Stage stage;
-    OrthographicCamera camera;
     Vector2 middle;
-    TiledMap tiledMap;
-    TiledMapRenderer renderer;
+    World world;
     InputMultiplexer inputMultiplexer;
     Logger logger;
-    Player player;
+    Dialog dialog;
 
     public MainMenu(final Main game){
         this.game = game;
-        this.img = new Texture(Gdx.files.internal("badlogic.jpg"));
-        this.camera = new OrthographicCamera();
-        this.stage = new Stage(new ExtendViewport(640, 480, camera));
-        this.player = new Player();
-        this.player.getSprite().setPosition(this.camera.position.x, this.camera.position.y);
+        this.world = new World();
+        this.stage = new Stage(new ExtendViewport(640, 480));
         this.middle = new Vector2(1200, 1000).scl(.5f);
-        this.tiledMap = new TmxMapLoader().load("test.tmx");
-        this.renderer = new OrthogonalTiledMapRenderer(tiledMap);
         this.logger = Logger.getLogger("Main");
         this.logger.setLevel(Level.ALL);
         this.inputMultiplexer = new InputMultiplexer();
-        this.inputMultiplexer.addProcessor(this.player);
+        this.inputMultiplexer.addProcessor(this.stage);
+        this.inputMultiplexer.addProcessor(this.world.player);
+        this.inputMultiplexer.addProcessor(this);
+        this.dialog = new Dialog(this.stage);
         Gdx.input.setInputProcessor(this.inputMultiplexer);
     }
 
     public void render(float deltaT){
         ScreenUtils.clear(0, 0, 0, 0);
         SpriteBatch batch = game.getSpriteBatch();
-        player.updateX();
-        collideDetectX();
-        player.updateY();
-        collideDetectY();
+        this.world.update();
 
-        this.camera.position.set(player.getPosition(), 0);
-        stage.getViewport().apply();
-        this.camera.update();
-        batch.setProjectionMatrix(this.stage.getCamera().combined);
-        this.renderer.setView(camera);
-        this.renderer.render();
+        this.world.render();
+        batch.setProjectionMatrix(this.world.camera.combined);
+        this.stage.act();
         batch.begin();
-        this.player.getSprite().draw(batch);
+        this.world.player.getSprite().draw(batch);
         batch.end();
-    }
-
-    private void collideDetectX(){
-        MapLayer collisionObjectLayer = tiledMap.getLayers().get("物件層 1");
-        MapObjects objects = collisionObjectLayer.getObjects();
-        Rectangle playerRectangle = player.getSprite().getBoundingRectangle();
-        // there are several other types, Rectangle is probably the most common one
-        for (RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class)) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            if (Intersector.overlaps(playerRectangle, rectangle)) {
-                if (player.isHeadLeft()){
-                    player.setPosition(rectangle.x + rectangle.getWidth(), playerRectangle.y);
-                }
-                else{
-                    player.setPosition(rectangle.x - playerRectangle.getWidth(), playerRectangle.y);
-                }
-            }
-        }
-    }
-
-    private void collideDetectY(){
-        MapLayer collisionObjectLayer = tiledMap.getLayers().get("物件層 1");
-        MapObjects objects = collisionObjectLayer.getObjects();
-        Rectangle playerRectangle = player.getSprite().getBoundingRectangle();
-        // there are several other types, Rectangle is probably the most common one
-        for (RectangleMapObject rectangleObject : objects.getByType(RectangleMapObject.class)) {
-            Rectangle rectangle = rectangleObject.getRectangle();
-            if (Intersector.overlaps(playerRectangle, rectangle)) {
-                if (player.isHeadDown()){
-                    player.setPosition(playerRectangle.x, rectangle.y + rectangle.getHeight());
-                }
-                else{
-                    player.setPosition(playerRectangle.x, rectangle.y - playerRectangle.getHeight());
-                }
-            }
-        }
+        stage.getViewport().apply();
+        this.stage.draw();
     }
 
     public void show(){
@@ -134,11 +84,26 @@ public class MainMenu implements Screen{
     }
 
     public void resize(int x, int y){
-        this.stage.getViewport().update(x, y);
+        this.world.resize(x, y);
     }
 
     public void dispose(){
-        img.dispose();
-    }
 
+    }
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode != Keys.Z)
+            return false;
+        Rectangle iRectangle = this.world.player.creatInvestgateRectangle();
+        RectangleMapObject collMapObject = world.getCollideObject(iRectangle);
+        System.out.println(iRectangle);
+        System.out.println(collMapObject);
+        if (collMapObject != null){
+            dialog.setPosition(0, 120);
+            dialog.setDescription((String)collMapObject.getProperties().get("Description"));
+            stage.addActor(dialog);
+            //this.world.player.heading.x = this.world.player.heading. y = 0;
+        }
+        return true;
+    }
 }
