@@ -18,25 +18,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 public class Dialog extends Window {
-    static float a = 0.2f;
+    static float a = 0.04f;
     String description;
     int cursor;
     float deltaT;
     BitmapFont font;
     Stage stage;
     boolean show;
-
+    Label label;
     public Dialog(final Stage stage){
         super("Dialog", new Skin(Gdx.files.internal("data/uiskin.json")));
         this.stage = stage;
         deltaT = 0.0f;
         description = "A";
         cursor = 1;
+        label = new Label(description, getSkin());
         setPosition(0, 0);
         setColor(new Color(255, 255, 255, 255));
         setWidth(stage.getWidth());
         setHeight(stage.getHeight() / 5);
-        this.add(new Label(description, getSkin()));
+        this.add(label);
         this.addListener(new InputListener(){
             @Override
             public boolean keyDown(InputEvent event, int keyCode){
@@ -51,6 +52,8 @@ public class Dialog extends Window {
         this.deltaT += deltaT;
         if (this.deltaT > a){
             cursor = (cursor++ >= description.length()) ? description.length() : cursor;
+            label.setText(description.substring(0, cursor));
+            this.deltaT -= a;
         }
     }
 
@@ -60,6 +63,8 @@ public class Dialog extends Window {
 
     public void setDescription(String description){
         this.description = description;
+        cursor = 1;
+        label.setText(description.substring(0, cursor));
     }
 }
 

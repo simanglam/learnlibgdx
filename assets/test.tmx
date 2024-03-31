@@ -102,7 +102,7 @@
  <objectgroup id="3" name="物件層 1">
   <object id="7" type="Rectangle" x="464" y="208" width="96" height="96">
    <properties>
-    <property name="Description" value="Hi"/>
+    <property name="Description" value="It's a small water pool"/>
    </properties>
   </object>
  </objectgroup>
