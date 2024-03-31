@@ -10,7 +10,7 @@ i:badlogic.jpg:badlogic-ba3e909e98a4c58c6a15f043f2e1a8a7.jpg:68465:image/jpeg:1
 b:roguelikeChar_transparent.tsx:roguelikeChar_transparent-dc3fd7d97464cf14464a5cdad7afed9f.tsx:276:application/unknown:1
 b:roguelikeDungeon_transparent.tsx:roguelikeDungeon_transparent-7063ba2902127cc603b72f0b59025af0.tsx:1281:application/unknown:1
 b:character.tmx:character-35618995309f600da75c75e0c9606218.tmx:403:application/unknown:1
-b:test.tmx:test-fe67ef537fe16cd078a1f1f29514949a.tmx:17333:application/unknown:1
+b:test.tmx:test-f45cb0b924a6374d2e99f07a8c1e9d26.tmx:17354:application/unknown:1
 b:map.tiled-project:map-97165873765b29a5041f09e541be15d5.tiled-project:223:application/unknown:1
 b:roguelikeIndoor_transparent.tsx:roguelikeIndoor_transparent-8389ed9439b770a72afd9b05c0f4013c.tsx:234:application/unknown:1
 b:roguelikeSheet_transparent.tsx:roguelikeSheet_transparent-8cd31481f6ae0839584cbab2ad1ee531.tsx:5808:application/unknown:1
