@@ -78,6 +78,7 @@ public class MainMenu extends InputAdapter implements Screen{
     public void resize(int x, int y){
         this.world.resize(x, y);
         stage.getViewport().update(x, y);
+        this.dialog.setSize(stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight() / 5);
     }
 
     public void dispose(){
