@@ -9,23 +9,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.simanglam.Dialog;
 import com.simanglam.Main;
-import com.simanglam.Player;
 import com.simanglam.World;
 
 public class MainMenu extends InputAdapter implements Screen{
@@ -40,7 +31,8 @@ public class MainMenu extends InputAdapter implements Screen{
     public MainMenu(final Main game){
         this.game = game;
         this.world = new World();
-        this.stage = new Stage(new ExtendViewport(640, 480));
+        this.stage = new Stage(new ExtendViewport(640, 480, new OrthographicCamera()));
+        this.stage.getCamera().position.set(0, 480, 0);
         this.middle = new Vector2(1200, 1000).scl(.5f);
         this.logger = Logger.getLogger("Main");
         this.logger.setLevel(Level.ALL);
@@ -85,6 +77,7 @@ public class MainMenu extends InputAdapter implements Screen{
 
     public void resize(int x, int y){
         this.world.resize(x, y);
+        stage.getViewport().update(x, y);
     }
 
     public void dispose(){

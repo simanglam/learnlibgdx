@@ -1,6 +1,5 @@
 package com.simanglam;
 
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObjects;
